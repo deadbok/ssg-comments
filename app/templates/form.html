@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	<meta charset="utf-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>Add a comment...</title>
+  	</head>
+	<body>
+		<form id="comment_form" action="{{url}}" method="post">
+			<input type="hidden" id="nonce" name="nonce" value="{{nonce}}" />
+			<input type="hidden" id="post" name="post" value="{{post}}" />
+			<input type="hidden" id="tid" name="tid" value="{{tid}}" />
+			<label for="name">Name: </label><br />
+			<input type="text" id="name" name="name" placeholder="John Doe" /><br />
+			<label for="email">E-mail <span class="comment">(Optional, will be exposed publicly on GitHub): </span></label><br />
+			<input type="email" id="email" name="email" placeholder="someone@somewhere.com" /><br />
+			<label for="subject">Subject: </label><br />
+			<input type="text" id="subject" name="subject" placeholder="subject" value="{{subject}}"/><br />
+			<label for="comment">Comment:</label><br />
+			<textarea id="comment" form="comment_form" name="comment" rows="6" placeholder="You comment (Your may use Markdown markup)..." required></textarea><br />
+			<input type="submit" value="Submit" />
+		</form>
+	</body>
+</html>
