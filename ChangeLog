@@ -1,0 +1,7 @@
+2016-08-15  oblivion  <oblivion@compaq>
+
+	* app/post-py: Added to deal with comment tht are not yes moderated.
+	* app/views/commit.py (get): Move the message to the final message queue.
+	* app/templates/stats.html: Add to show statistics.
+	* app/views/stats.py: Add to show statistics. 
+	* app/__init__.py: Add load_json.

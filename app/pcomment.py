@@ -4,9 +4,10 @@ Created on 13 Aug 2016
 @author: oblivion
 '''
 import json
+from datetime import datetime
 
 
-class Comment(object):
+class PostedComment(object):
     '''
     Class that holds comment data until commit
     '''
@@ -34,7 +35,24 @@ class Comment(object):
         ret['tid'] = self.tid
         ret['name'] = self.name
         ret['email'] = self.email
-        ret['date'] = self.date.isoformat()
+        if self.date == 0:
+            ret['date'] = 0
+        else:
+            ret['date'] = self.date.timestamp()
         ret['message'] = self.message
 
         return(ret)
+
+    def from_dict(self, comment):
+        '''
+        Populate from a dictionary.
+        '''
+        self.__init__(mid=comment['mid'],
+                      ip=comment['ip'],
+                      post=comment['post'],
+                      subject=comment['subject'],
+                      tid=comment['tid'],
+                      name=comment['name'],
+                      email=comment['email'],
+                      date=datetime.fromtimestamp(comment['date']),
+                      message=comment['message'])

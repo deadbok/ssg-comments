@@ -12,7 +12,7 @@ import smtplib
 from socket import getfqdn
 
 import app
-from app.comment import Comment
+from app.pcomment import PostedComment
 
 
 class Form(MethodView):
@@ -32,6 +32,8 @@ class Form(MethodView):
                        subject='', message=''):
         '''
         Send en email to the moderator about the post.
+
+        @todo: Error handling.
         '''
         header = 'From: %s\n' % from_addr
         header += 'To: %s\n' % ','.join(to_addr_list)
@@ -53,8 +55,8 @@ class Form(MethodView):
         Render the comment form.
         '''
         # Create a secret for the form
-        self.nonce = app.FORM_NONCES.add(type=app.FORM_TYPE)
-        app.save_json();
+        self.nonce = app.FORM_NONCES.new(ntype=app.FORM_TYPE)
+        app.save_json()
 
         current_app.logger.debug("Rendering comment form template.")
         return render_template('form.html', nonce=self.nonce, post=post,
@@ -78,15 +80,15 @@ class Form(MethodView):
 
         app.FORM_NONCES.free(nonce)
 
-        comment = Comment(name=request.form['name'],
-                          email=request.form['email'],
-                          date=datetime.now(),
-                          message=request.form['comment'],
-                          ip=request.remote_addr)
-        cnonce = app.COMMIT_NONCES.add(value=comment,
+        comment = PostedComment(name=request.form['name'],
+                                email=request.form['email'],
+                                date=datetime.now(),
+                                message=request.form['comment'],
+                                ip=request.remote_addr)
+        cnonce = app.COMMIT_NONCES.new(value=comment,
                                        timeout=datetime.now() +
                                        timedelta(days=31),
-                                       type=app.COMMIT_TYPE)
+                                       ntype=app.COMMIT_TYPE)
 
         self.send_mod_email(from_addr=current_app.config['FROM_EMAIL'],
                             to_addr_list=[current_app.config['TO_EMAIL']],
@@ -96,7 +98,8 @@ class Form(MethodView):
                                      '\nMessage:\n\n' + comment.message +
                                      '\n\nCommit link: ' + getfqdn() +
                                      ':5000/post/commit/' + cnonce
-                            ))
+                                     )
+                            )
 
-        app.save_json();
+        app.save_json()
         return "Comment recieved."

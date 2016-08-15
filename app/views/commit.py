@@ -3,6 +3,7 @@ Created on 13 Aug 2016
 
 @author: oblivion
 '''
+from app import mcomment
 
 from flask import abort
 from flask import current_app
@@ -38,6 +39,19 @@ class Commit(MethodView):
 
         current_app.logger.info('Commit cnonce: ' + cnonce)
 
-        comment = app.COMMIT_NONCES.get(cnonce)
+        # Convert to modded comment.
+        comment = mcomment.ModdedComment()
+        comment.from_dict(app.COMMIT_NONCES.get(cnonce)['value'].get_dict())
+        # Add to the right list.
+        msg_nonce = app.MSG_NONCES.new(value=comment, timeout=None,
+                                       ntype=app.MSG_TYPE)
+        current_app.logger.debug('New message nonce: ' + msg_nonce)
+        current_app.logger.debug('Data: ' + str(comment.get_dict()))
 
+        app.COMMIT_NONCES.free(cnonce)
+
+        current_app.logger.debug('Moderated messages: ' +
+                                 str(app.MSG_NONCES.len()))
+
+        app.save_json()
         return "Comment commited."
