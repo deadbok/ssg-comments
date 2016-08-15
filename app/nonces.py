@@ -86,7 +86,6 @@ class Nonces(object):
 
         nonce = None
         for nonce in expired:
-            current_app.logger.debug('Expireing nonce: ' + nonce)
             del self.nonces[nonce]
 
     def get_dict(self):

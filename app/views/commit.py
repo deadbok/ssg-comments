@@ -53,5 +53,7 @@ class Commit(MethodView):
         current_app.logger.debug('Moderated messages: ' +
                                  str(app.MSG_NONCES.len()))
 
+        app.MSG_NONCES.get(msg_nonce)['value'].new_mid()
         app.save_json()
+        app.MSG_NONCES.get(msg_nonce)['value'].save_markdown()
         return "Comment commited."

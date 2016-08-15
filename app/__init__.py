@@ -6,6 +6,7 @@ from datetime import datetime
 from flask import Flask
 import io
 import json
+import os.path
 from logging import handlers
 import logging
 
@@ -52,6 +53,11 @@ def load_json():
     global COMMIT_NONCES
 
     APP.logger.debug("Loading JSON.")
+
+    if not os.path.isfile(APP.config['QUEUED_MSG_PATH'] + 'state.json'):
+        APP.logger.info('No saved date.')
+        return
+
     with io.open(APP.config['QUEUED_MSG_PATH'] + 'state.json', 'r',
                  encoding='utf-8') as json_file:
         json_data = json_file.read()
