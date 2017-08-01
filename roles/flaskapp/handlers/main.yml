@@ -1,0 +1,11 @@
+- name: restart uwsgi
+  systemd:
+    name: uwsgi
+    state: restarted
+  become: true
+
+- name: restart lighttpd
+  systemd:
+    name: lighttpd
+    state: restarted
+  become: true

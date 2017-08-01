@@ -6,7 +6,7 @@ from flask import current_app
 from flask import render_template
 from flask.views import MethodView
 
-import app
+import ssg_comments
 
 
 class Stats(MethodView):
@@ -23,6 +23,6 @@ class Stats(MethodView):
         app.save_json()
 
         current_app.logger.debug("Rendering status template.")
-        return render_template('stats.html', form=app.FORM_NONCES.len(),
-                               commit=app.COMMIT_NONCES.len(),
-                               msg=app.MSG_NONCES.len())
+        return render_template('stats.html', form=ssg_comments.FORM_NONCES.len(),
+                               commit=ssg_comments.COMMIT_NONCES.len(),
+                               msg=ssg_comments.MSG_NONCES.len())

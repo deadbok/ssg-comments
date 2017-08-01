@@ -1,0 +1,83 @@
+---
+- name: Install packages.
+  apt:
+    name: "{{ item }}"
+    state: present
+  become: true
+  with_items:
+   - lighttpd
+   - uwsgi
+   - uwsgi-plugin-python3
+   - python3-flask
+
+- name: Deploy the project directory
+  synchronize:
+    src: "{{ flasskapp_src_dir }}/."
+    dest: "{{ flasskapp_install_dir }}/{{ flaskapp_name }}"
+    archive: yes
+    delete: yes
+  notify: restart uwsgi
+
+- name: Setup uwsgi
+  template:
+    src: "uwsgi.j2"
+    dest: "/etc/uwsgi/apps-available/{{ flaskapp_name }}.ini"
+    mode: 0644
+  notify: restart uwsgi
+  become: yes
+
+- name: Enable flask app for uwsgi.
+  file:
+    src: "/etc/uwsgi/apps-available/{{ flaskapp_name }}.ini"
+    dest: "/etc/uwsgi/apps-enabled/{{ flaskapp_name }}.ini"
+    state: link
+  notify: restart uwsgi
+  become: yes
+
+- name: Enable the uwsgi daemon.
+  service:
+    name: uwsgi
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Setup lighttpd uwsgi flask app configuration
+  template:
+    src: "lighttpd.j2"
+    dest: "/etc/lighttpd/{{ flaskapp_name }}.conf"
+    mode: 0644
+  notify: restart lighttpd
+  become: yes
+
+- name: Add uwsgi flask app configuration
+  lineinfile:
+    path: /etc/lighttpd/lighttpd.conf
+    state: present
+    line: "include \"{{ flaskapp_name }}.conf\""
+  notify: restart lighttpd
+  become: yes
+
+- name: Remove default port 80
+  lineinfile:
+    path: /etc/lighttpd/lighttpd.conf
+    state: absent
+    line: "server.port = 80"
+  notify: restart lighttpd
+  become: yes
+
+- name: Set new port
+  lineinfile:
+    path: /etc/lighttpd/lighttpd.conf
+    state: present
+    line: "server.port = {{ flaskapp_httpd_port }}"
+  notify: restart lighttpd
+  become: yes
+
+
+- name: Enable the lighttpd daemon.
+  service:
+    name: lighttpd
+    state: started
+    enabled: yes
+  become: true
+  notify: restart lighttpd

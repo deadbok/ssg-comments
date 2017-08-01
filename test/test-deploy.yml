@@ -1,0 +1,15 @@
+---
+- hosts: all
+  roles:
+    - role: flaskapp
+  tasks:
+  - name: Install tools.
+    apt:
+      name: "{{ item }}"
+      state: present
+    become: true
+    with_items:
+     - git
+     - mc
+     - htop
+

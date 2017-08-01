@@ -11,8 +11,8 @@ from flask.views import MethodView
 import smtplib
 from socket import getfqdn
 
-import app
-from app.pcomment import PostedComment
+import ssg_comments
+from ssg_comments.pcomment import PostedComment
 
 
 class Form(MethodView):
@@ -88,7 +88,7 @@ class Form(MethodView):
         cnonce = app.COMMIT_NONCES.new(value=comment,
                                        timeout=datetime.now() +
                                        timedelta(days=31),
-                                       ntype=app.COMMIT_TYPE)
+                                       ntype=ssg_comments.COMMIT_TYPE)
 
         self.send_mod_email(from_addr=current_app.config['FROM_EMAIL'],
                             to_addr_list=[current_app.config['TO_EMAIL']],

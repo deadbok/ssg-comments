@@ -3,13 +3,13 @@ Created on 13 Aug 2016
 
 @author: oblivion
 '''
-from app import mcomment
+from ssg_comments import mcomment
 
 from flask import abort
 from flask import current_app
 from flask.views import MethodView
 
-import app
+import ssg_comments
 
 
 class Commit(MethodView):
@@ -41,19 +41,19 @@ class Commit(MethodView):
 
         # Convert to modded comment.
         comment = mcomment.ModdedComment()
-        comment.from_dict(app.COMMIT_NONCES.get(cnonce)['value'].get_dict())
+        comment.from_dict(ssg_comments.COMMIT_NONCES.get(cnonce)['value'].get_dict())
         # Add to the right list.
-        msg_nonce = app.MSG_NONCES.new(value=comment, timeout=None,
+        msg_nonce = ssg_comments.MSG_NONCES.new(value=comment, timeout=None,
                                        ntype=app.MSG_TYPE)
         current_app.logger.debug('New message nonce: ' + msg_nonce)
         current_app.logger.debug('Data: ' + str(comment.get_dict()))
 
-        app.COMMIT_NONCES.free(cnonce)
+        ssg_comments.COMMIT_NONCES.free(cnonce)
 
         current_app.logger.debug('Moderated messages: ' +
                                  str(app.MSG_NONCES.len()))
 
-        app.MSG_NONCES.get(msg_nonce)['value'].new_mid()
-        app.save_json()
-        app.MSG_NONCES.get(msg_nonce)['value'].save_markdown()
+        ssg_comments.MSG_NONCES.get(msg_nonce)['value'].new_mid()
+        ssg_comments.save_json()
+        ssg_comments.MSG_NONCES.get(msg_nonce)['value'].save_markdown()
         return "Comment commited."

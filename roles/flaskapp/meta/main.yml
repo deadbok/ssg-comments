@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: timezone }
+  - { role: ntp-debian }

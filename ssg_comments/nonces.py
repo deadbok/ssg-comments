@@ -22,7 +22,6 @@ class Nonces(object):
         '''
         Add a nonce.
         '''
-        self.expire()
         if not self.is_active(nonce):
             self.nonces[nonce] = dict()
             self.nonces[nonce]['timeout'] = timeout

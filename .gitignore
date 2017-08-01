@@ -70,3 +70,6 @@ target/
 # PyCharm
 .idea/
 
+/test/test-deploy.retry
+test/.vagrant/
+test/test-deploy.retry

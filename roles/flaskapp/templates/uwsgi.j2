@@ -1,0 +1,13 @@
+[uwsgi]
+socket = 127.0.0.1:{{ flaskapp_port }}
+chmod-socket = 775
+chdir = {{ flasskapp_install_dir }}{{ flaskapp_name }}
+env = SSG_COMMENTS_CONFIG={{ flaskapp_config_path }}
+master = true
+module = {{ flaskapp_name }}:APP
+uid = {{ ansible_ssh_user }}
+gid = www-data
+processes = 1
+threads = 10
+plugins = python3,logfile
+logger = file:{{ flasskapp_install_dir }}/{{ flaskapp_name }}/uwsgi.log
